@@ -1,6 +1,8 @@
 Maysara:
 
+-Add Leds to port C
 
+-Programming pins
 
 
 
@@ -15,13 +17,18 @@ Maysara:
 
 Ram:
 
+-Basic block            #inProgress 
+  --blinkig lede
+  --input 
+  --output
 
+-PWM ... Analog to digital
 
+-speaker tone
 
+-menu design
 
-
-
-
+-script to download and test 
 
 
 

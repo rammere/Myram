@@ -1,0 +1,185 @@
+;;;@Author Ram Zaher && Maysara Abdullah                                ;;;;
+;;;@Copyright Me Company                                                ;;;;
+;;;@email rm.mere@gmail.com                                             ;;;;
+;;;                                                                     ;;;;
+;;                                                                      ;;;;
+;;;  This is a firmware for Mayram Kit                                  ;;;;
+;;;                                                                     ;;;;
+;;;                                                                     ;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+                                 #include "P16F877A.INC"
+
+    __config 0x3f76 ;sets the config settings (oscillator type etc)
+ 
+
+
+
+ org 0
+cblock
+	d1
+	d2
+	d3
+	endc
+    goto MAIN
+
+MAIN
+ BCF     STATUS,RP1
+ BSF     STATUS,RP0
+ MOVLW   0x0
+ MOVWF   TRISB
+ BSF     STATUS,RP1
+ BCF     STATUS,RP0
+ MOVLW   0x00
+ MOVWF   EEADRH
+ MOVLW   0X80
+ MOVWF   EEADR
+ MOVLW   0X20
+ MOVWF   FSR
+
+;; rotine that right a program in the data memory/register files ( blinking led )
+
+;; this is for set the bank to 0 ( choose PORTTA)
+ 
+ movlw   0x03
+ MOVWF   INDF
+
+ incf    FSR,F
+ movlw   0x13
+ MOVWF   INDF
+
+ incf    FSR,F
+ movlw   0x83
+ MOVWF   INDF
+
+ incf    FSR,F
+ movlw   0x12
+ MOVWF   INDF
+
+;;;;;;;;;;;;;;;;;;;
+;; move 01 to port D
+ incf    FSR,F
+ movlw   0x01
+ MOVWF   INDF
+ incf    FSR,F
+ movlw   0x30
+ MOVWF   INDF
+
+ incf    FSR,F
+ movlw   0x86
+ MOVWF   INDF
+ incf    FSR,F
+ movlw   0x00
+ MOVWF   INDF
+
+;;;delay calling
+ incf    FSR,F
+ movlw   0x60
+ MOVWF   INDF
+ incf    FSR,F
+ movlw   0x28
+ MOVWF   INDF
+
+
+
+  incf    FSR,F
+ movlw   0x00
+ MOVWF   INDF
+ incf    FSR,F
+ movlw   0x30
+ MOVWF   INDF
+
+ incf    FSR,F
+ movlw   0x86
+ MOVWF   INDF
+ incf    FSR,F
+ movlw   0x00
+ MOVWF   INDF
+
+
+;;;delay calling
+ incf    FSR,F
+ movlw   0x6A
+ MOVWF   INDF
+ incf    FSR,F
+ movlw   0x28
+ MOVWF   INDF
+
+
+
+;; back to the first address
+ incf    FSR,F
+ MOVLW   0X82
+ MOVWF   INDF
+ incf    FSR,F
+ MOVLW   0X28
+ MOVWF   INDF
+
+ MOVLW   0X20
+ MOVWF   FSR
+
+LOOP
+ MOVF   INDF,W
+ MOVWF   EEDATA
+ INCF    FSR,F
+ MOVF    INDF,W
+ MOVWF   EEDATH
+ INCF    FSR,F
+ BSF     STATUS,RP0
+ BSF     EECON1,EEPGD
+ BSF     EECON1,WREN
+ BCF     INTCON,GIE
+ MOVLW   0X55
+ MOVWF   EECON2
+ MOVLW   0xAA
+ MOVWF   EECON2
+ BSF     EECON1,WR
+ NOP
+
+ NOP
+
+ BCF     EECON1,WREN
+ BSF     INTCON,GIE
+ BCF     STATUS,RP0
+ INCF    EEADR,F
+ MOVF    EEADR,W
+ ANDLW   0x16
+ XORLW   0x16
+ BTFSS   STATUS,Z
+ GOTO    LOOP
+ GOTO    0x80
+ GOTO    $
+
+Delay
+  movlw 0x06
+  movwf d1
+  movlw 0x18
+  movwf d2
+
+loop1
+ decfsz d1,1
+ goto loop1
+ decfsz d2,1
+ goto loop1
+ NOP
+ GOTO 0X85
+
+Delay1
+ movlw	0x2D
+ movwf	d1
+ movlw	loop2
+ movwf	d2
+ movlw	0x0B
+ movwf	d3
+loop2
+ decfsz	d1, f
+ goto	loop2
+ decfsz	d2, f
+ goto	loop2
+ decfsz	d3, f
+ goto	loop2
+
+ GOTO 0X88
+
+
+ END
